@@ -175,6 +175,7 @@ Restart the server without `DELAY_FIRST` before running the benchmark.
 
 Everything runs on localhost.
 500 GET requests per case after 100 warmup requests.
+100 POST requests
 
 ### Payload size (bytes)
 
@@ -195,6 +196,18 @@ Everything runs on localhost.
           |     REST |    0.72 |    0.77 |    0.81
   1000000 |     gRPC |    0.80 |    1.04 |    1.14
           |     REST |    2.56 |    2.91 |    3.36
+
+#### POST (create) latency
+
+     text | protocol |     p50 |     p95 |     p99
+     1000 |     gRPC |    0.21 |    0.25 |    0.26
+          |     REST |    0.59 |    0.69 |    0.92
+    10000 |     gRPC |    0.22 |    0.25 |    0.27
+          |     REST |    0.62 |    0.72 |    0.99
+   100000 |     gRPC |    0.29 |    0.34 |    0.37
+          |     REST |    0.95 |    1.03 |    1.23
+  1000000 |     gRPC |    1.14 |    2.61 |    7.93
+          |     REST |    6.27 |   12.02 |   14.46
 
 ## Conclusions
 
@@ -217,8 +230,8 @@ Everything runs on localhost.
 - Everything runs on localhost, so there is no real network delay.
 - Storage is in memory, there is no real S3 or database. Data is lost on restart.
 - Requests are sent one by one, without parallel load.
-- Only GET is measured.
-- Payload size is measured for the body only, without HTTP headers.
+- Only GET and POST (create) are measured. PUT is similar to create (it also sends the text),
+  and DELETE and List my pastes have small messages and are rare, so they are not measured.- Payload size is measured for the body only, without HTTP headers.
 - The latency difference includes the frameworks (grpc-python vs Django + JSON),
   not only the protocols.
 - Login is mocked: `user_id` is passed in the request instead of a JWT.
