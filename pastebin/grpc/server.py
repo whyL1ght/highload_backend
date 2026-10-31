@@ -7,13 +7,14 @@ from concurrent import futures
 
 import grpc
 import paste_pb2
-import grpc.paste_pb2_grpc as paste_pb2_grpc
+import paste_pb2_grpc
 
 ALPHABET = string.ascii_letters + string.digits
 MAX_SIZE = 1024 * 1024  # 1 MB
 
 # for testing: the server sleeps after creating a paste (first call only)
 DELAY_FIRST = float(os.environ.get("DELAY_FIRST", "0"))
+delay_first_pending = True
 
 pastes = {}      # id -> dict with paste data
 idem_keys = {}   # idempotency_key -> (id, expires_at)
@@ -49,6 +50,8 @@ def check_owner(context, paste, user_id):
 class PasteService(paste_pb2_grpc.PasteServiceServicer):
 
     def CreatePaste(self, request, context):
+        global delay_first_pending
+
         if len(request.content.encode()) > MAX_SIZE:
             context.abort(grpc.StatusCode.INVALID_ARGUMENT,
                           "content is too big (max 1 MB)")
@@ -75,7 +78,8 @@ class PasteService(paste_pb2_grpc.PasteServiceServicer):
                 idem_keys[key] = (pid, expires_at)
             print("created paste", pid)
 
-        if DELAY_FIRST:
+        if DELAY_FIRST and delay_first_pending:
+            delay_first_pending = False
             time.sleep(DELAY_FIRST)  # fake slow server
         return paste_pb2.CreatePasteResponse(id=pid, expires_at=expires_at)
 

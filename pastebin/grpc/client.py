@@ -4,7 +4,7 @@ import uuid
 
 import grpc
 import paste_pb2
-import grpc.paste_pb2_grpc as paste_pb2_grpc
+import paste_pb2_grpc
 
 TIMEOUT = 0.15      # 150 ms, same as our p99 goal
 MAX_ATTEMPTS = 3

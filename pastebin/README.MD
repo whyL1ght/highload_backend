@@ -31,7 +31,7 @@ WebSocket is not needed: Pastebin has no real-time updates.
 flowchart LR
     U[Client] --> CDN["CDN (not built)"]
     CDN --> GW["API gateway (not built)"]
-    GW -->|gRPC, protobuf| PS[Paste service<br/>grpc_service/server.py]
+    GW -->|gRPC, protobuf| PS[Paste service<br/>grpc/server.py]
     PS --> MEM[(In-memory store)]
     PS -.->|mocked| S3[(S3)]
     PS -.->|mocked| DB[(Metadata DB)]
@@ -113,42 +113,42 @@ gRPC has no "410 Gone" status, so expired and deleted pastes return NOT_FOUND wi
 
 ```
 .
-├── README.md
-├── requirements.txt
-├── grpc_service/
+├── README.MD
+├── requirements/
+│   └── dev.txt
+├── grpc/
 │   ├── paste.proto          # contract
 │   ├── paste_pb2.py         # generated
 │   ├── paste_pb2_grpc.py    # generated
 │   ├── server.py            # gRPC Paste service
 │   ├── client.py            # client with timeout, retry, idempotency key
 │   └── benchmark.py         # gRPC vs REST measurements
-└── rest_service/            # REST/JSON baseline (Django)
-    ├── manage.py
-    ├── pastebin/            # Django project
-    └── pastes/              # Django app (views, urls, in-memory store)
+├── manage.py
+├── pastebin/                # Django project
+└── apps/pastes/             # Django app (views, urls, in-memory store)
 ```
 
 ## How to run
 
 ```bash
-pip install -r requirements.txt
+pip install -r requirements/dev.txt
 ```
 
 **Terminal 1: gRPC server**
 ```bash
-cd grpc_service
+cd grpc
 python server.py
 ```
 
 **Terminal 2: REST baseline (Django)**
 ```bash
-cd rest_service
+cd ..
 waitress-serve --host=127.0.0.1 --port=8000 pastebin.wsgi:application
 ```
 
 **Terminal 3: client demo and benchmark**
 ```bash
-cd grpc_service
+cd grpc
 python client.py
 python benchmark.py
 ```
@@ -188,14 +188,14 @@ Everything runs on localhost.
 
 | Text size | Protocol | p50 | p95 | p99 |
 |---|---|---|---|---|
-| 1 KB | gRPC | 0.17 | 0.21 | 0.29 |
-| 1 KB | REST | 0.52 | 0.78 | 1.48 |
-| 10 KB | gRPC | 0.18 | 0.20 | 0.22 |
-| 10 KB | REST | 0.53 | 0.57 | 0.60 |
-| 100 KB | gRPC | 0.21 | 0.25 | 0.28 |
-| 100 KB | REST | 0.72 | 0.84 | 0.99 |
-| 1 MB | gRPC | 0.79 | 1.07 | 1.18 |
-| 1 MB | REST | 2.50 | 3.60 | 5.22 |
+| 1 KB | gRPC | 0.18 | 0.25 | 0.34 |
+| 1 KB | REST | 0.56 | 0.88 | 1.07 |
+| 10 KB | gRPC | 0.18 | 0.24 | 0.35 |
+| 10 KB | REST | 0.57 | 0.89 | 1.19 |
+| 100 KB | gRPC | 0.22 | 0.29 | 0.38 |
+| 100 KB | REST | 0.77 | 1.13 | 1.27 |
+| 1 MB | gRPC | 0.80 | 1.13 | 1.37 |
+| 1 MB | REST | 2.68 | 3.32 | 4.77 |
 
 ## Conclusions
 
@@ -206,7 +206,7 @@ Everything runs on localhost.
   (for example 0.17 ms vs 0.52 ms for 1 KB, 0.79 ms vs 2.50 ms for 1 MB).
   The p99 value is the 5th slowest of 500 requests, so it is noisy. We rely on p50 and p95.
 - **Requirement p99 < 150 ms:** both protocols are far below the goal.
-  The slowest case (REST, 1 MB) has p99 = 5.22 ms.
+  The slowest case (REST, 1 MB) has p99 = 4.77 ms.
 - **In the real system:** S3 (~80 ms) and the network (~30 ms) cost much more than the protocol
   difference (1-4 ms). The protocol alone will not decide the total latency.
 - **Decision:** the Paste service uses gRPC. It has lower latency in our measurements,

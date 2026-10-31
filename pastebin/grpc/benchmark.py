@@ -7,7 +7,7 @@ import string
 import grpc
 import requests
 import paste_pb2
-import grpc.paste_pb2_grpc as paste_pb2_grpc
+import paste_pb2_grpc
 
 SIZES = [1_000, 10_000, 100_000, 1_000_000]  # text size in bytes
 WARMUP = 100
