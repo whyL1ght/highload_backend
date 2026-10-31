@@ -7,6 +7,7 @@ service PasteService {
   rpc GetPaste (GetPasteRequest) returns (GetPasteResponse);
   rpc UpdatePaste (UpdatePasteRequest) returns (UpdatePasteResponse);
   rpc DeletePaste (DeletePasteRequest) returns (DeletePasteResponse);
+  rpc ListMyPastes (ListMyPastesRequest) returns (ListMyPastesResponse);
 }
 
 message CreatePasteRequest {
@@ -43,3 +44,15 @@ message DeletePasteRequest {
   string user_id = 2;
 }
 message DeletePasteResponse {}
+
+message ListMyPastesRequest {
+  string user_id = 1;
+}
+message PasteInfo {
+  string id = 1;
+  int64 created_at = 2;
+  int64 expires_at = 3;
+}
+message ListMyPastesResponse {
+  repeated PasteInfo pastes = 1;
+}

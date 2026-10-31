@@ -54,6 +54,11 @@ class PasteServiceStub:
                 request_serializer=paste__pb2.DeletePasteRequest.SerializeToString,
                 response_deserializer=paste__pb2.DeletePasteResponse.FromString,
                 _registered_method=True)
+        self.ListMyPastes = channel.unary_unary(
+                '/pastebin.PasteService/ListMyPastes',
+                request_serializer=paste__pb2.ListMyPastesRequest.SerializeToString,
+                response_deserializer=paste__pb2.ListMyPastesResponse.FromString,
+                _registered_method=True)
 
 
 class PasteServiceServicer:
@@ -83,6 +88,12 @@ class PasteServiceServicer:
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
+    def ListMyPastes(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
 
 def add_PasteServiceServicer_to_server(servicer, server):
     rpc_method_handlers = {
@@ -105,6 +116,11 @@ def add_PasteServiceServicer_to_server(servicer, server):
                     servicer.DeletePaste,
                     request_deserializer=paste__pb2.DeletePasteRequest.FromString,
                     response_serializer=paste__pb2.DeletePasteResponse.SerializeToString,
+            ),
+            'ListMyPastes': grpc.unary_unary_rpc_method_handler(
+                    servicer.ListMyPastes,
+                    request_deserializer=paste__pb2.ListMyPastesRequest.FromString,
+                    response_serializer=paste__pb2.ListMyPastesResponse.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -215,6 +231,33 @@ class PasteService:
             '/pastebin.PasteService/DeletePaste',
             paste__pb2.DeletePasteRequest.SerializeToString,
             paste__pb2.DeletePasteResponse.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def ListMyPastes(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/pastebin.PasteService/ListMyPastes',
+            paste__pb2.ListMyPastesRequest.SerializeToString,
+            paste__pb2.ListMyPastesResponse.FromString,
             options,
             channel_credentials,
             insecure,

@@ -6,7 +6,7 @@ A REST/JSON service (Django) is used as a **baseline** for latency and payload s
 
 Language: Python.
 
-Operations: `CreatePaste`, `GetPaste`, `UpdatePaste`, `DeletePaste`.
+Operations: `CreatePaste`, `GetPaste`, `UpdatePaste`, `DeletePaste`, `ListMyPastes`.
 
 ## Why gRPC
 
@@ -57,7 +57,7 @@ So the benchmark compares the protocols, not the databases.
 
 | Part | Status |
 |---|---|
-| Create / Get / Update / Delete | implemented |
+| Create / Get / Update / Delete / List my pastes | implemented |
 | Idempotency key for create | implemented |
 | Timeout (deadline 150 ms) | implemented in `client.py` |
 | Retry (3 attempts, backoff + jitter) | implemented in `client.py` |
@@ -106,6 +106,7 @@ sequenceDiagram
 | No login | UNAUTHENTICATED | 401 |
 | Not your paste | PERMISSION_DENIED | 403 |
 | Text bigger than 1 MB | INVALID_ARGUMENT | 413 |
+| List my pastes without login | UNAUTHENTICATED | 401 |
 
 gRPC has no "410 Gone" status, so expired and deleted pastes return NOT_FOUND with a different message.
 
@@ -221,3 +222,4 @@ Everything runs on localhost.
 - The latency difference includes the frameworks (grpc-python vs Django + JSON),
   not only the protocols.
 - Login is mocked: `user_id` is passed in the request instead of a JWT.
+- List my pastes has no pagination and returns all live pastes of the user.

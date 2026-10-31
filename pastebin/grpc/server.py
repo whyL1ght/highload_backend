@@ -29,7 +29,6 @@ def new_id():
 
 
 def check_paste(context, pid):
-    # returns the paste or stops the call with an error
     paste = pastes.get(pid)
     if paste is None:
         context.abort(grpc.StatusCode.NOT_FOUND, "paste not found")
@@ -38,6 +37,14 @@ def check_paste(context, pid):
     if paste["expires_at"] != 0 and time.time() > paste["expires_at"]:
         context.abort(grpc.StatusCode.NOT_FOUND, "paste expired")
     return paste
+
+
+def is_alive(paste):
+    if paste["deleted_at"] != 0:
+        return False
+    if paste["expires_at"] != 0 and time.time() > paste["expires_at"]:
+        return False
+    return True
 
 
 def check_owner(context, paste, user_id):
@@ -58,7 +65,6 @@ class PasteService(paste_pb2_grpc.PasteServiceServicer):
 
         key = request.idempotency_key
         with lock:
-            # same key again -> return the old answer, do not create a new paste
             if key and key in idem_keys:
                 pid, expires_at = idem_keys[key]
                 return paste_pb2.CreatePasteResponse(id=pid, expires_at=expires_at)
@@ -106,6 +112,27 @@ class PasteService(paste_pb2_grpc.PasteServiceServicer):
         check_owner(context, paste, request.user_id)
         paste["deleted_at"] = int(time.time())  # soft delete
         return paste_pb2.DeletePasteResponse()
+
+    def ListMyPastes(self, request, context):
+        if request.user_id == "":
+            context.abort(grpc.StatusCode.UNAUTHENTICATED, "login required")
+
+        with lock:
+            # copy, so other threads can not break the loop
+            items = list(pastes.items())
+
+        result = []
+        for pid, paste in items:
+            if paste["user_id"] != request.user_id:
+                continue
+            if not is_alive(paste):
+                continue
+            result.append(paste_pb2.PasteInfo(
+                id=pid,
+                created_at=paste["created_at"],
+                expires_at=paste["expires_at"],
+            ))
+        return paste_pb2.ListMyPastesResponse(pastes=result)
 
 
 def serve():

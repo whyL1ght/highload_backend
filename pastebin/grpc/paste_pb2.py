@@ -24,7 +24,7 @@ _sym_db = _symbol_database.Default()
 
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x0bpaste.proto\x12\x08pastebin\"d\n\x12\x43reatePasteRequest\x12\x0f\n\x07\x63ontent\x18\x01 \x01(\t\x12\x13\n\x0bttl_seconds\x18\x02 \x01(\x03\x12\x0f\n\x07user_id\x18\x03 \x01(\t\x12\x17\n\x0fidempotency_key\x18\x04 \x01(\t\"5\n\x13\x43reatePasteResponse\x12\n\n\x02id\x18\x01 \x01(\t\x12\x12\n\nexpires_at\x18\x02 \x01(\x03\"\x1d\n\x0fGetPasteRequest\x12\n\n\x02id\x18\x01 \x01(\t\"K\n\x10GetPasteResponse\x12\x0f\n\x07\x63ontent\x18\x01 \x01(\t\x12\x12\n\ncreated_at\x18\x02 \x01(\x03\x12\x12\n\nexpires_at\x18\x03 \x01(\x03\"B\n\x12UpdatePasteRequest\x12\n\n\x02id\x18\x01 \x01(\t\x12\x0f\n\x07\x63ontent\x18\x02 \x01(\t\x12\x0f\n\x07user_id\x18\x03 \x01(\t\")\n\x13UpdatePasteResponse\x12\x12\n\nupdated_at\x18\x01 \x01(\x03\"1\n\x12\x44\x65letePasteRequest\x12\n\n\x02id\x18\x01 \x01(\t\x12\x0f\n\x07user_id\x18\x02 \x01(\t\"\x15\n\x13\x44\x65letePasteResponse2\xb5\x02\n\x0cPasteService\x12J\n\x0b\x43reatePaste\x12\x1c.pastebin.CreatePasteRequest\x1a\x1d.pastebin.CreatePasteResponse\x12\x41\n\x08GetPaste\x12\x19.pastebin.GetPasteRequest\x1a\x1a.pastebin.GetPasteResponse\x12J\n\x0bUpdatePaste\x12\x1c.pastebin.UpdatePasteRequest\x1a\x1d.pastebin.UpdatePasteResponse\x12J\n\x0b\x44\x65letePaste\x12\x1c.pastebin.DeletePasteRequest\x1a\x1d.pastebin.DeletePasteResponseb\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x0bpaste.proto\x12\x08pastebin\"d\n\x12\x43reatePasteRequest\x12\x0f\n\x07\x63ontent\x18\x01 \x01(\t\x12\x13\n\x0bttl_seconds\x18\x02 \x01(\x03\x12\x0f\n\x07user_id\x18\x03 \x01(\t\x12\x17\n\x0fidempotency_key\x18\x04 \x01(\t\"5\n\x13\x43reatePasteResponse\x12\n\n\x02id\x18\x01 \x01(\t\x12\x12\n\nexpires_at\x18\x02 \x01(\x03\"\x1d\n\x0fGetPasteRequest\x12\n\n\x02id\x18\x01 \x01(\t\"K\n\x10GetPasteResponse\x12\x0f\n\x07\x63ontent\x18\x01 \x01(\t\x12\x12\n\ncreated_at\x18\x02 \x01(\x03\x12\x12\n\nexpires_at\x18\x03 \x01(\x03\"B\n\x12UpdatePasteRequest\x12\n\n\x02id\x18\x01 \x01(\t\x12\x0f\n\x07\x63ontent\x18\x02 \x01(\t\x12\x0f\n\x07user_id\x18\x03 \x01(\t\")\n\x13UpdatePasteResponse\x12\x12\n\nupdated_at\x18\x01 \x01(\x03\"1\n\x12\x44\x65letePasteRequest\x12\n\n\x02id\x18\x01 \x01(\t\x12\x0f\n\x07user_id\x18\x02 \x01(\t\"\x15\n\x13\x44\x65letePasteResponse\"&\n\x13ListMyPastesRequest\x12\x0f\n\x07user_id\x18\x01 \x01(\t\"?\n\tPasteInfo\x12\n\n\x02id\x18\x01 \x01(\t\x12\x12\n\ncreated_at\x18\x02 \x01(\x03\x12\x12\n\nexpires_at\x18\x03 \x01(\x03\";\n\x14ListMyPastesResponse\x12#\n\x06pastes\x18\x01 \x03(\x0b\x32\x13.pastebin.PasteInfo2\x84\x03\n\x0cPasteService\x12J\n\x0b\x43reatePaste\x12\x1c.pastebin.CreatePasteRequest\x1a\x1d.pastebin.CreatePasteResponse\x12\x41\n\x08GetPaste\x12\x19.pastebin.GetPasteRequest\x1a\x1a.pastebin.GetPasteResponse\x12J\n\x0bUpdatePaste\x12\x1c.pastebin.UpdatePasteRequest\x1a\x1d.pastebin.UpdatePasteResponse\x12J\n\x0b\x44\x65letePaste\x12\x1c.pastebin.DeletePasteRequest\x1a\x1d.pastebin.DeletePasteResponse\x12M\n\x0cListMyPastes\x12\x1d.pastebin.ListMyPastesRequest\x1a\x1e.pastebin.ListMyPastesResponseb\x06proto3')
 
 _globals = globals()
 _builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, _globals)
@@ -47,6 +47,12 @@ if not _descriptor._USE_C_DESCRIPTORS:
   _globals['_DELETEPASTEREQUEST']._serialized_end=450
   _globals['_DELETEPASTERESPONSE']._serialized_start=452
   _globals['_DELETEPASTERESPONSE']._serialized_end=473
-  _globals['_PASTESERVICE']._serialized_start=476
-  _globals['_PASTESERVICE']._serialized_end=785
+  _globals['_LISTMYPASTESREQUEST']._serialized_start=475
+  _globals['_LISTMYPASTESREQUEST']._serialized_end=513
+  _globals['_PASTEINFO']._serialized_start=515
+  _globals['_PASTEINFO']._serialized_end=578
+  _globals['_LISTMYPASTESRESPONSE']._serialized_start=580
+  _globals['_LISTMYPASTESRESPONSE']._serialized_end=639
+  _globals['_PASTESERVICE']._serialized_start=642
+  _globals['_PASTESERVICE']._serialized_end=1030
 # @@protoc_insertion_point(module_scope)

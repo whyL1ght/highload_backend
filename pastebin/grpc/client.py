@@ -56,6 +56,11 @@ def main():
         stub.GetPaste, paste_pb2.GetPasteRequest(id=created.id))
     print("  content =", got.content)
 
+    print("4b. list my pastes")
+    my = call_with_retry(
+        stub.ListMyPastes, paste_pb2.ListMyPastesRequest(user_id="user-1"))
+    print("  count =", len(my.pastes), "ids =", [p.id for p in my.pastes])
+
     print("5. update by another user")
     try:
         call_with_retry(stub.UpdatePaste, paste_pb2.UpdatePasteRequest(

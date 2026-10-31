@@ -97,3 +97,29 @@ def paste_detail(request, pid):
         return err
     paste["deleted_at"] = int(time.time())  # soft delete
     return HttpResponse(status=204)
+
+
+@require_http_methods(["GET"])
+def my_pastes(request):
+    user_id = request.GET.get("user_id", "")
+    if user_id == "":
+        return error(401, "login required")
+
+    with lock:
+        # copy, so other threads can not break the loop
+        items = list(pastes.items())
+
+    result = []
+    for pid, paste in items:
+        if paste["user_id"] != user_id:
+            continue
+        if paste["deleted_at"] != 0:
+            continue
+        if paste["expires_at"] != 0 and time.time() > paste["expires_at"]:
+            continue
+        result.append({
+            "id": pid,
+            "created_at": paste["created_at"],
+            "expires_at": paste["expires_at"],
+        })
+    return JsonResponse({"pastes": result})
